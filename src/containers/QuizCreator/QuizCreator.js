@@ -23,9 +23,10 @@ function createFormControls() {
     option1: createOptionControl(1),
     option2: createOptionControl(2),
     option3: createOptionControl(3),
-    option4: createOptionControl(4),
+    option4: createOptionControl(4)
   }
 }
+
 
 export default class QuizCreator extends Component {
 
@@ -33,24 +34,52 @@ export default class QuizCreator extends Component {
     quiz: [],
     isFormValid: false,
     rightAnswerId: 1,
-    formControls: createFormControls(),
+    formControls: createFormControls()
   };
 
   submitHandler = event => {
-    event.preventDefault()
+    event.preventDefault();
   };
 
   addQuestionHandler = event => {
     event.preventDefault();
+
+    const quiz = this.state.quiz.concat();
+    const index = quiz.length + 1;
+
+    const {question, option1, option2, option3, option4} = this.state.formControls;
+
+    const questionItem = {
+      question: question.value,
+      id: index,
+      rightAnswerId: this.state.rightAnswerId,
+      answers: [
+        {text: option1.value, id: option1.id},
+        {text: option2.value, id: option2.id},
+        {text: option3.value, id: option3.id},
+        {text: option4.value, id: option4.id}
+      ]
+    };
+
+    quiz.push(questionItem);
+
+    this.setState({
+      quiz,
+      isFormValid: false,
+      rightAnswerId: 1,
+      formControls: createFormControls()
+    })
   };
 
-  createQuizHandler = () => {
+  createQuizHandler = event => {
+    event.preventDefault();
 
+    console.log(this.state.quiz)
   };
 
   changeHandler = (value, controlName) => {
-    const formControls = { ...this.state.formControls };
-    const control = { ...formControls[controlName]};
+    const formControls = {...this.state.formControls};
+    const control = {...formControls[controlName]};
 
     control.touched = true;
     control.value = value;
@@ -114,6 +143,7 @@ export default class QuizCreator extends Component {
             {this.renderControls()}
 
             {select}
+
             <Button
               type="primary"
               onClick={this.addQuestionHandler}
